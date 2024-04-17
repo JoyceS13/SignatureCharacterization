@@ -1,0 +1,16 @@
+SKCM
+Indels:  2085
+Reference mismatches:  332
+Total mutations: 413743
+BRCA
+Indels:  10924
+Reference mismatches:  110
+Total mutations: 92120
+LUNG
+Indels:  10199
+Reference mismatches:  741
+Total mutations: 379733
+STAD
+Indels:  26246
+Reference mismatches:  168
+Total mutations: 216801

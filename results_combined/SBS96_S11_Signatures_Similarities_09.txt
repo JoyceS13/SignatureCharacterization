@@ -1,0 +1,7 @@
+Number of similar signatures: 5
+combined_11_SBS96C	LUNG_SBS96A
+combined_11_SBS96F	LUNG_SBS96D
+combined_11_SBS96F	STAD_SBS96B
+combined_11_SBS96G	STAD_SBS96A
+combined_11_SBS96J	STAD_SBS96C
+combined_11_SBS96K	STAD_SBS96F

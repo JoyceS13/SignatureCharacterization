@@ -68,8 +68,9 @@ def concatenate_files(files, output_file):
     df = pd.read_csv(files[0], delimiter="\t")
     df.set_index('Mutation Types', inplace=True)
     for i in range(1, len(files)):
-        df = pd.concat([df, pd.read_csv(files[i], delimiter="\t").set_index('Mutation Types')], axis=1, join='outer', sort=False)
-    df.to_csv(output_file, sep="\t", index=True)
+        df = pd.concat([df, pd.read_csv(files[i], delimiter="\t").set_index('Mutation Types', inplace=True)], axis=1)
+    df = df.reset_index()
+    df.to_csv(output_file, sep="\t", index=False)
     
 if __name__=="__main__":
     # input_skcm = "C:/Users/wyjsu/Downloads/mc3_SKCM_mc3.txt/SKCM_mc3.txt"
@@ -97,4 +98,4 @@ if __name__=="__main__":
     # print(total_num_mutations_stad)
     # #log_mutations(input_stad, output_stad)
     
-    concatenate_files(["data/SKCM.txt", "data/BRCA.txt", "data/LUNG.txt", "data/STAD.txt"], "data/combined.txt")
+    concatenate_files(["data/SKCM.txt", "data/BRCA.txt", "data/LUNG.txt", "data/STAD.txt"], "data/combined_data.txt")

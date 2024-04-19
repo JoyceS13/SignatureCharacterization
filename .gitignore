@@ -1,3 +1,12 @@
 data/dna
 data/21BRCA_vcf
-results
+/results/
+/results_combined_**
+/results_combined1/
+/results_combined2/
+/scripts/
+/slurm-**.out
+/results_STAD_long/
+/results_21BRCA.txt/
+/results_classifiers/
+labeled_data_test.txt

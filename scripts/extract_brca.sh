@@ -2,10 +2,10 @@
 #
 #SBATCH --job-name="extract_brca"
 #SBATCH --partition=compute
-#SBATCH --time=4:00:00
-#SBATCH --ntasks=4
-#SBATCH --cpus-per-task=2
-#SBATCH --mem-per-cpu=1G
+#SBATCH --time=8:00:00
+#SBATCH --ntasks=2
+#SBATCH --cpus-per-task=6
+#SBATCH --mem-per-cpu=2G
 #SBATCH --cores=4
 
 module load 2023r1

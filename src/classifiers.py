@@ -106,11 +106,9 @@ def calculate_shap_nn(nn, X):
     return shap_values
 
 def plot_shap(shap_values, X, output_folder, model_name):
-    shap.summary_plot(
-    [shap_values[:, :, class_ind].values for class_ind in range(shap_values.shape[-1])],
-    feature_names=X.columns,
-    plot_type="bar"
-    )
+    class_names = ["BRCA", "LUNG", "STAD", "SKCM"]
+    feature_names = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
+    shap.summary_plot(shap_values, X.values, plot_type="bar", class_names= class_names, feature_names = X.columns)
     plt.savefig(output_folder + '/' + model_name + '_shap_summary_plot.png')
     shap.summary_plot(shap_values, X)
     plt.savefig(output_folder + '/' + model_name +  '_shap_summary_plot_values.png')
@@ -239,10 +237,11 @@ def retrieve_models(model_folder):
     
 if __name__ == '__main__':
     #main('data/labeled_data_11.txt', "results_classifiers_11")
-    main_one_vs_all('data/labeled_data_11.txt', "results_classifiers_11/one_v_all")
-    # rf, nn = retrieve_models("results_classifiers")
-    # X_train, X_test, y_train, y_test = load_data('data/labeled_data_test.txt')
-    # shap_values_rf = calculate_shap_rf(rf, X_train)
-    # plot_shap(shap_values_rf, X_train, "results_classifiers", model_name='random_forest')
-    # shap_values_nn = calculate_shap_nn(nn, X_train)
-    # plot_shap(shap_values_nn, X_train, "results_classifiers", model_name='neural_network')
+    #main_one_vs_all('data/labeled_data_11.txt', "results_classifiers_11/one_v_all")
+    rf, nn = retrieve_models("results_classifiers")
+    X, y = load_data('data/labeled_data_test.txt')
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    shap_values_rf = calculate_shap_rf(rf, X_train)
+    plot_shap(shap_values_rf, X_train, "results_classifiers", model_name='random_forest')
+    shap_values_nn = calculate_shap_nn(nn, X_train)
+    plot_shap(shap_values_nn, X_train, "results_classifiers", model_name='neural_network')

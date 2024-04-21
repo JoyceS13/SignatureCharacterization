@@ -94,24 +94,37 @@ def feature_importance(model, X, y, output_folder, data_name="", scoring='accura
         for i in sorted_idx:
             f.write('{}: {}\n'.format(X.columns[i], result.importances_mean[i]))
             
-def calculate_shap_rf(rf, X):
-    explainer = shap.TreeExplainer(rf)
-    shap_values = explainer.shap_values(X)
+def calculate_shap_rf(rf, X_train, X_test):
+    explainer = shap.TreeExplainer(rf, X_train)
+    shap_values = explainer.shap_values(X_test)
+    print(shap_values.shape)
     return shap_values
 
-def calculate_shap_nn(nn, X):
-    X_summary = shap.kmeans(X, 50)
-    explainer = shap.KernelExplainer(nn.predict, X_summary)
-    shap_values = explainer.shap_values(X_summary)
+def calculate_shap_nn(nn, X_train, X_test):
+    X_summary = shap.kmeans(X_train, 50)
+    explainer = shap.KernelExplainer(nn.predict_proba, X_summary)
+    shap_values = explainer.shap_values(X_test)
     return shap_values
 
 def plot_shap(shap_values, X, output_folder, model_name):
     class_names = ["BRCA", "LUNG", "STAD", "SKCM"]
     feature_names = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
-    shap.summary_plot(shap_values, X.values, plot_type="bar", class_names= class_names, feature_names = X.columns)
+    #shap_values = shap_values.transpose(2, 0, 1)
+    #shap.summary_plot(shap_values, X, plot_type='bar', class_names=class_names, feature_names=feature_names)
+    shap.summary_plot(
+    [shap_values[:, :, class_ind] for class_ind in range(shap_values.shape[-1])],
+    class_names=class_names,
+    feature_names=feature_names,
+    plot_type="bar"
+)
     plt.savefig(output_folder + '/' + model_name + '_shap_summary_plot.png')
-    shap.summary_plot(shap_values, X)
-    plt.savefig(output_folder + '/' + model_name +  '_shap_summary_plot_values.png')
+    plt.clf()
+    for i in range(len(class_names)):
+        shap.summary_plot(shap_values[:, :, i], X, feature_names=feature_names)
+        plt.savefig(output_folder + '/' + model_name + '_shap_summary_plot_class_' + class_names[i] + '.png')
+        plt.clf()
+    # shap.summary_plot(shap_values[0], X)
+    # plt.savefig(output_folder + '/' + model_name +  '_shap_summary_plot_values.png')
 
 def main(input_file, output_folder):
     #if output folder does not exist, create it
@@ -238,10 +251,10 @@ def retrieve_models(model_folder):
 if __name__ == '__main__':
     #main('data/labeled_data_11.txt', "results_classifiers_11")
     #main_one_vs_all('data/labeled_data_11.txt', "results_classifiers_11/one_v_all")
-    rf, nn = retrieve_models("results_classifiers")
-    X, y = load_data('data/labeled_data_test.txt')
+    rf, nn = retrieve_models("results_classifiers_11")
+    X, y = load_data('data/labeled_data_11.txt')
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    shap_values_rf = calculate_shap_rf(rf, X_train)
-    plot_shap(shap_values_rf, X_train, "results_classifiers", model_name='random_forest')
-    shap_values_nn = calculate_shap_nn(nn, X_train)
-    plot_shap(shap_values_nn, X_train, "results_classifiers", model_name='neural_network')
+    shap_values_rf = calculate_shap_rf(rf, X_train, X_test)
+    plot_shap(shap_values_rf, X_test, "results_classifiers_11", model_name='random_forest')
+    shap_values_nn = calculate_shap_nn(nn, X_train, X_test)
+    plot_shap(shap_values_nn, X_test, "results_classifiers_11", model_name='neural_network')

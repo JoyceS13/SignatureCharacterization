@@ -79,26 +79,23 @@ def plot_mds_coordinates(signatures, coordinates):
     #color points by class, annotate signature names
     for i, signature in enumerate(signatures):
         if "ALL" in signature:
-            ax.plot(coordinates[i, 0], coordinates[i, 1], "o", color="red")
-        elif "BRCA" in signature:
-            ax.plot(coordinates[i, 0], coordinates[i, 1], "o", color="blue")
-        elif "LUNG" in signature:
-            ax.plot(coordinates[i, 0], coordinates[i, 1], "o", color="green")
-        elif "SKCM" in signature:
-            ax.plot(coordinates[i, 0], coordinates[i, 1], "o", color="purple")
-        elif "STAD" in signature:
             ax.plot(coordinates[i, 0], coordinates[i, 1], "o", color="orange")
+        elif "BRCA" in signature:
+            ax.plot(coordinates[i, 0], coordinates[i, 1], "o", color="purple")
+        elif "LUNG" in signature:
+            ax.plot(coordinates[i, 0], coordinates[i, 1], "o", color="blue")
+        elif "SKCM" in signature:
+            ax.plot(coordinates[i, 0], coordinates[i, 1], "o", color="red")
+        elif "STAD" in signature:
+            ax.plot(coordinates[i, 0], coordinates[i, 1], "o", color="green")
         ax.text(coordinates[i, 0], coordinates[i, 1], signature[-1])
     
-    #add labels
-    ax.set_xlabel("MDS1")
-    ax.set_ylabel("MDS2")
     #plot legend
-    ax.plot([], [], "o", color="red", label="ALL")
-    ax.plot([], [], "o", color="blue", label="BRCA")
-    ax.plot([], [], "o", color="green", label="LUNG")
-    ax.plot([], [], "o", color="purple", label="SKCM")
-    ax.plot([], [], "o", color="orange", label="STAD")
+    ax.plot([], [], "o", color="orange", label="ALL")
+    ax.plot([], [], "o", color="purple", label="BRCA")
+    ax.plot([], [], "o", color="blue", label="LUNG")
+    ax.plot([], [], "o", color="red", label="SKCM")
+    ax.plot([], [], "o", color="green", label="STAD")
     ax.legend()
 
     return fig
@@ -184,7 +181,7 @@ if __name__ == "__main__":
     # main(combined_results, 
     #      results_individual, 
     #      "results_combined/SBS96_S11_Signatures_Similarities_08.txt")
-    #main_MDS([combined_results] + results_individual, "results_combined/SBS96_S11_Signatures_MDS.png")
-    main_MDS_3D([combined_results] + results_individual, "results_combined/SBS96_S11_Signatures_MDS_3D.png")
+    main_MDS([combined_results] + results_individual, "results_combined/SBS96_S11_Signatures_MDS_new.png")
+    #main_MDS_3D([combined_results] + results_individual, "results_combined/SBS96_S11_Signatures_MDS_3D.png")
     
 

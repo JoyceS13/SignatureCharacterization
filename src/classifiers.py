@@ -98,31 +98,44 @@ def calculate_shap_rf(rf, X_train, X_test):
     explainer = shap.TreeExplainer(rf, X_train)
     shap_values = explainer.shap_values(X_test)
     print(shap_values.shape)
-    return shap_values
+    return shap_values, explainer
 
 def calculate_shap_nn(nn, X_train, X_test):
     X_summary = shap.kmeans(X_train, 50)
     explainer = shap.KernelExplainer(nn.predict_proba, X_summary)
     shap_values = explainer.shap_values(X_test)
-    return shap_values
+    return shap_values, explainer
 
-def plot_shap(shap_values, X, output_folder, model_name):
+def plot_shap(shap_values, explainer, X, output_folder, model_name):
     class_names = ["BRCA", "LUNG", "STAD", "SKCM"]
     feature_names = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
     #shap_values = shap_values.transpose(2, 0, 1)
     #shap.summary_plot(shap_values, X, plot_type='bar', class_names=class_names, feature_names=feature_names)
+    plt.figure(figsize=(7, 5) )
     shap.summary_plot(
     [shap_values[:, :, class_ind] for class_ind in range(shap_values.shape[-1])],
     class_names=class_names,
     feature_names=feature_names,
-    plot_type="bar"
+    plot_type="bar",
+    plot_size=[6, 5]
 )
     plt.savefig(output_folder + '/' + model_name + '_shap_summary_plot.png')
     plt.clf()
+    plt.figure(figsize=(20, 5))
     for i in range(len(class_names)):
-        shap.summary_plot(shap_values[:, :, i], X, feature_names=feature_names)
-        plt.savefig(output_folder + '/' + model_name + '_shap_summary_plot_class_' + class_names[i] + '.png')
-        plt.clf()
+        plt.subplot(1, len(class_names), i + 1)
+        shap.summary_plot(shap_values[:, :, i], X, feature_names=feature_names, plot_size=[20,5], max_display=5)
+    plt.savefig(output_folder + '/' + model_name + '_shap_summary_plot_dot.png')
+    plt.clf()
+    
+    #plot individual bar plots in subplots
+    shap_explainer = explainer(X)
+    for i in range(len(class_names)):
+        plt.figure()
+        shap.plots.bar(shap_explainer[:, :, i], max_display=5)
+        plt.savefig(output_folder + '/' + model_name + '_shap_summary_plot_bar_'+ class_names[i] +'.png')
+    plt.clf()
+        
     # shap.summary_plot(shap_values[0], X)
     # plt.savefig(output_folder + '/' + model_name +  '_shap_summary_plot_values.png')
 
@@ -254,7 +267,7 @@ if __name__ == '__main__':
     rf, nn = retrieve_models("results_classifiers_11")
     X, y = load_data('data/labeled_data_11.txt')
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    shap_values_rf = calculate_shap_rf(rf, X_train, X_test)
-    plot_shap(shap_values_rf, X_test, "results_classifiers_11", model_name='random_forest')
-    shap_values_nn = calculate_shap_nn(nn, X_train, X_test)
-    plot_shap(shap_values_nn, X_test, "results_classifiers_11", model_name='neural_network')
+    shap_values_rf, explainer_rf = calculate_shap_rf(rf, X_train, X_test)
+    plot_shap(shap_values_rf, explainer_rf, X_test, "results_classifiers_11", model_name='random_forest')
+    shap_values_nn, explainer_nn = calculate_shap_nn(nn, X_train, X_test)
+    plot_shap(shap_values_nn, explainer_nn, X_test, "results_classifiers_11", model_name='neural_network')

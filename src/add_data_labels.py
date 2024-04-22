@@ -35,8 +35,24 @@ def add_data_labels(activity_file, output_file, normalized=True):
     activity_data.insert(0, 'Data Label', data_labels)
     activity_data.to_csv(output_file, sep="\t", index=True)
     
+def median_activity_per_cancer_type():
+    activities = pd.read_csv("data/labeled_data_11.txt", delimiter="\t", index_col=0)
+    for cancer_type in activities['Data Label'].unique():
+        cancer_type_data = activities[activities['Data Label'] == cancer_type]
+        median_activity = cancer_type_data.iloc[:, 1:].median()
+        average_activity = cancer_type_data.iloc[:, 1:].mean()
+        #print all results to file
+        with open("results_combined/Median_Activities.txt", 'a') as f:
+            f.write(cancer_type + "\n")
+            f.write("Median Activity\n")
+            f.write(str(median_activity) + "\n\n")
+            f.write("Average Activity\n")
+            f.write(str(average_activity) + "\n\n")
+
+    
 if __name__=="__main__":
-    activity_file = "results_combined/SBS96_11_Signatures/Activities/SBS96_S11_NMF_Activities.txt"
-    output_file = "data/labeled_data_11.txt"
-    add_data_labels(activity_file, output_file)
+    # activity_file = "results_combined/SBS96_11_Signatures/Activities/SBS96_S11_NMF_Activities.txt"
+    # output_file = "data/labeled_data_11.txt"
+    # add_data_labels(activity_file, output_file)
+    median_activity_per_cancer_type()
     

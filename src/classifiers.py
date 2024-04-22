@@ -107,7 +107,7 @@ def calculate_shap_nn(nn, X_train, X_test):
     return shap_values, explainer
 
 def plot_shap(shap_values, explainer, X, output_folder, model_name):
-    class_names = ["BRCA", "LUNG", "STAD", "SKCM"]
+    class_names = ["BRCA", "LUNG", "SKCM", "STAD"]
     feature_names = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
     #shap_values = shap_values.transpose(2, 0, 1)
     #shap.summary_plot(shap_values, X, plot_type='bar', class_names=class_names, feature_names=feature_names)
@@ -117,14 +117,14 @@ def plot_shap(shap_values, explainer, X, output_folder, model_name):
     class_names=class_names,
     feature_names=feature_names,
     plot_type="bar",
-    plot_size=[6, 5]
+    plot_size=[5, 5]
 )
     plt.savefig(output_folder + '/' + model_name + '_shap_summary_plot.png')
     plt.clf()
-    plt.figure(figsize=(20, 5))
+    plt.figure(figsize=(18, 3.5))
     for i in range(len(class_names)):
         plt.subplot(1, len(class_names), i + 1)
-        shap.summary_plot(shap_values[:, :, i], X, feature_names=feature_names, plot_size=[20,5], max_display=5)
+        shap.summary_plot(shap_values[:, :, i], X, feature_names=feature_names, plot_size=[18,3.5], max_display=4)
     plt.savefig(output_folder + '/' + model_name + '_shap_summary_plot_dot.png')
     plt.clf()
     
